@@ -80,11 +80,24 @@ function deleteDirectory($dir)
 
 // Used to display errors
 function showError($message)
-{
-?>
+{ ?>
     <p style="color: red;">[ERROR]: <?php echo $message ?></p>
     <p>If this continues to happen, contact support in our <a href=" https://discord.gg/QWdS9CB" target="_blank">Discord</a>.</p>
     <a href="?step=select">Click here to try again.</a>
+<?php
+}
+
+// Used to display warnings
+function showWarning($message)
+{ ?>
+    <p style="color: goldenrod;">[WARNING]: <?php echo $message ?></p>
+<?php
+}
+
+// Used to display debugging info
+function showDebugging($message)
+{ ?>
+    <p style="color: green;">[DEBUG]: <?php echo $message ?></p>
 <?php
 }
 
@@ -147,23 +160,21 @@ function showError($message)
                             <p>NamelessMC has two versions: <b>v1 (1.0.21)</b> and <b>v2 (pr7)</b>.</p>
                             <p><b>v2</b> is recommended by NamelessMC developers as it is a complete rewrite and provides many more functionalities - such as modules, widgets and beautiful templates.</p>
                             <br />
-                            <div align="center">
-                                <div class="row">
-                                    <div class="card mx-auto" style="width: 18rem;">
-                                        <div class="card-body rounded" style="background-color: #2185D0">
-                                            <h5 class="card-title" style="color: white">Legacy</h5>
-                                            <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v1-homepage.jpg" class="card-img" alt="NamelessMC v1.0.21">
-                                            <hr style="background-color: white">
-                                            <a href="?step=verify&ver=v1" class="btn btn-outline btn-version">v1.0.21</a>
-                                        </div>
+                            <div class="row">
+                                <div class="card mx-auto" style="width: 22rem;">
+                                    <div class="card-body rounded" style="background-color: #2185D0">
+                                        <h5 class="card-title" style="color: white">Legacy</h5>
+                                        <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v1-homepage.jpg" class="card-img" alt="NamelessMC v1.0.21">
+                                        <hr style="background-color: white">
+                                        <a href="?step=verify&ver=v1" class="btn btn-outline btn-version">v1.0.21</a>
                                     </div>
-                                    <div class="card mx-auto" style="width: 18rem;">
-                                        <div class="card-body rounded" style="background-color: #21BA45">
-                                            <h5 class="card-title" style="color: white">Recommended</h5>
-                                            <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr7">
-                                            <hr style="background-color: white">
-                                            <a href="?step=verify&ver=v2" class="btn btn-outline btn-version">v2.0.0-pr7</a>
-                                        </div>
+                                </div>
+                                <div class="card mx-auto" style="width: 22rem;">
+                                    <div class="card-body rounded" style="background-color: #21BA45">
+                                        <h5 class="card-title" style="color: white">Recommended</h5>
+                                        <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr7">
+                                        <hr style="background-color: white">
+                                        <a href="?step=verify&ver=v2" class="btn btn-outline btn-version">v2.0.0-pr7</a>
                                     </div>
                                 </div>
                             </div>
@@ -181,44 +192,47 @@ function showError($message)
                             break;
                         }
                     case 'download': {
-                            if ($version == 'v1') {
-                                $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v1.0.21.zip';
-                            } else if ($version == 'v2') {
-                                $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v2.0.0-pr7.zip';
-                            } else {
+                            if ($version == 'v1') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v1.0.21.zip';
+                            else if ($version == 'v2') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v2.0.0-pr7.zip';
+                            else {
                                 header('Location: http://' . $_SERVER['HTTP_HOST'] . '/easy-install.php?step=select');
                                 break;
                             }
-                            if (copy($zip_url, $zip_file)) { ?>
-                                <p style="color: green;">[DEBUG]: NamelessMC (<?php echo $zip_file ?>) downloaded...</p>
-                            <?php } else {
+                            if (copy($zip_url, $zip_file)) showDebugging("NamelessMC ($zip_file) downloaded...");
+                            else {
                                 showError("NamelessMC could not be downloaded.");
                                 break;
                             }
+
+                            $redirect = true;
 
                             // Unzip, move files and cleanup
                             $zip = new ZipArchive;
                             if ($zip->open($zip_file) === true) {
                                 $zip->extractTo('./');
-                                $zip->close(); ?>
-                                <p style="color: green;">[DEBUG]: Success extracting zip file...</p>
-                                <?php if (moveDirectory($zip_subdir, '.')) { ?>
-                                    <p style="color: green;">[DEBUG]: Success copying files from zip to root directory...</p>
-                                    <?php if (deleteDirectory($zip_subdir)) { ?>
-                                        <p style="color: green;">[DEBUG]: Success deleting original folder...</p>
+                                $zip->close();
+                                showDebugging("Success extracting zip file...");
+                                if (moveDirectory($zip_subdir, '.')) {
+                                    showDebugging("Success copying files from zip to root directory...");
+                                    if (deleteDirectory($zip_subdir)) showDebugging("Success deleting extracted zip...");
+                                    else {
+                                        showWarning("NamelessMC extracted folder could not be deleted, but it safe to continue.");
+                                        $redirect = false;
+                                    }
+                                    if (unlink($zip_file)) showDebugging("Success deleting zip file...");
+                                    else {
+                                        showWarning("NamelessMC zip file could not be deleted, but it safe to continue.");
+                                        $redirect = false;
+                                    }
+                                    // If a warning happened, they can continue, but we let them know
+                                    if (!$redirect) { ?>
+                                        <p>Something went wrong, but you can continue. <a href="http://<?php echo $_SERVER['HTTP_HOST'] ?>">Click here</a> to install.</p>
                                     <?php } else { ?>
-                                        <p style="color: goldenrod;">[WARNING]: NamelessMC extracted folder could not be deleted, but it safe to continue.</p>
-                                    <?php }
-                                    if (unlink($zip_file)) { ?>
-                                        <p style="color: green;">[DEBUG]: Success deleting zip file...</p>
-                                    <?php } else { ?>
-                                        <p style="color: goldenrod;">[WARNING]: NamelessMC zip file could not be deleted, but it is safe to continue.</p>
-                                    <?php } ?>
-                                    <p>Attempting to redirect you... <a href="http://<?php echo $_SERVER['HTTP_HOST'] ?>">Click here</a> if nothing happens.</p>
-                                    <script type="text/javascript">
-                                        window.location.href = 'http://<?php echo $_SERVER['HTTP_HOST'] ?>'
-                                    </script>
-                    <?php } else {
+                                        <script type="text/javascript">
+                                            window.location.href = 'http://<?php echo $_SERVER['HTTP_HOST'] ?>'
+                                        </script>
+                    <?php }
+                                } else {
                                     showError("NamelessMC could not be moved from the extracted folder.");
                                 }
                             } else {
@@ -227,16 +241,16 @@ function showError($message)
                             break;
                         }
                     default:
-                        header('Location: http://' . $_SERVER['HTTP_HOST']);
+                        header('Location: http://' . $_SERVER['HTTP_HOST'] . '/easy-install.php');
                 }
-                if ($step != 'welcome') { ?>
+                if ($step != 'welcome' && $step != 'download') { ?>
                     <hr>
                     <div align="center">
                         <button onclick="history.back();" class="btn btn-sm btn-secondary">« Back</button>
                     </div>
                 <?php } ?>
                 <div align="right">
-                    <p>Nameless-Installer | Version: 1.0.0-rc1</p>
+                    <p>Nameless-Installer | Version: 1.0.0-rc2</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
