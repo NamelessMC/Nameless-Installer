@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0-rc1
+ *  Nameless-Installer version 1.0.0-rc2
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -66,13 +66,13 @@ function moveDirectory($source, $dest)
 // Used to delete the original extracted zip dir
 function deleteDirectory($dir)
 {
-    if (!file_exists($dir))  return true;
+    if (!file_exists($dir)) return true;
 
     if (!is_dir($dir)) return unlink($dir);
 
     foreach (scandir($dir) as $item) {
         if ($item == '.' || $item == '..') continue;
-        if (!deleteDirectory($dir . DIRECTORY_SEPARATOR . $item))  return false;
+        if (!deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) return false;
     }
 
     return rmdir($dir);
@@ -145,8 +145,8 @@ function showDebugging($message)
 
                 <?php
                 switch ($step) {
-                    case 'welcome': {
-                ?>
+                    case 'welcome': { ?>
+
                             <p><i>Welcome to NamelessMC!</i></p>
                             <p>This script will download and extract NamelessMC for you.</p>
                             <p>In the next step we will choose which version of NamelessMC to install.</p>
@@ -154,8 +154,9 @@ function showDebugging($message)
                         <?php
                             break;
                         }
-                    case 'select': {
-                        ?>
+
+                    case 'select': { ?>
+
                             <p><i>Now you must choose which version of NamelessMC you want to install.</i></p>
                             <p>NamelessMC has two versions: <b>v1 (1.0.21)</b> and <b>v2 (pr7)</b>.</p>
                             <p><b>v2</b> is recommended by NamelessMC developers as it is a complete rewrite and provides many more functionalities - such as modules, widgets and beautiful templates.</p>
@@ -178,77 +179,100 @@ function showDebugging($message)
                                     </div>
                                 </div>
                             </div>
-                        <?php
-                            break;
+
+                        <?php break;
                         }
-                    case 'verify': {
-                        ?>
+
+                    case 'verify': { ?>
+
                             <p><i>NamelessMC <?php echo $version ?> will now download and extract itself.</i></p>
                             <p>It will automatically refresh, so please do not reload the page.</p>
                             <p>Click <a href="?step=download&ver=<?php echo $version ?>" onclick="statusUpdate()">here</a> to proceed.</p>
                             <div id="status" align="center"></div>
                             <h4 id="no-reload" style="color: red; display: none"><b>DO NOT RELOAD</b></h4>
-                            <?php
-                            break;
+
+                            <?php break;
                         }
+
                     case 'download': {
+
                             if ($version == 'v1') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v1.0.21.zip';
                             else if ($version == 'v2') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v2.0.0-pr7.zip';
+
+                            // Direct to selection screen if they went to an invalid version
                             else {
                                 header('Location: http://' . $_SERVER['HTTP_HOST'] . '/easy-install.php?step=select');
                                 break;
                             }
+
+                            // Download the zip from Github, if this fails, probably a permission issue
                             if (copy($zip_url, $zip_file)) showDebugging("NamelessMC ($zip_file) downloaded...");
                             else {
                                 showError("NamelessMC could not be downloaded.");
                                 break;
                             }
 
-                            $redirect = true;
-
                             // Unzip, move files and cleanup
                             $zip = new ZipArchive;
-                            if ($zip->open($zip_file) === true) {
+                            if ($zip->open($zip_file)) {
                                 $zip->extractTo('./');
                                 $zip->close();
+
+                                $redirect = true;
+
                                 showDebugging("Success extracting zip file...");
+
+                                // If moving the directory failed, there may have been a corrupt file within it (uncommon)
                                 if (moveDirectory($zip_subdir, '.')) {
                                     showDebugging("Success copying files from zip to root directory...");
+
+                                    // If deleting the unzipped directory fails, it might have already been deleted..?
                                     if (deleteDirectory($zip_subdir)) showDebugging("Success deleting extracted zip...");
                                     else {
                                         showWarning("NamelessMC extracted folder could not be deleted, but it safe to continue.");
                                         $redirect = false;
                                     }
+
+                                    // If deleting the zip fails, it is probably a weird permission issue
                                     if (unlink($zip_file)) showDebugging("Success deleting zip file...");
                                     else {
                                         showWarning("NamelessMC zip file could not be deleted, but it safe to continue.");
                                         $redirect = false;
                                     }
-                                    // If a warning happened, they can continue, but we let them know
+
+                                    // If a warning happened, they can continue, but we let them know. If not, we just redirect them
                                     if (!$redirect) { ?>
-                                        <p>Something went wrong, but you can continue. <a href="http://<?php echo $_SERVER['HTTP_HOST'] ?>">Click here</a> to install.</p>
+                                        <p>Something minor went wrong, but you can continue. <a href="http://<?php echo $_SERVER['HTTP_HOST'] ?>">Click here</a>.</p>
+                                        <hr>
                                     <?php } else { ?>
-                                        <script type="text/javascript">
+                                        <script>
                                             window.location.href = 'http://<?php echo $_SERVER['HTTP_HOST'] ?>'
                                         </script>
                     <?php }
                                 } else {
                                     showError("NamelessMC could not be moved from the extracted folder.");
+                                    break;
                                 }
                             } else {
                                 showError("NamelessMC could not be extracted.");
+                                break;
                             }
                             break;
                         }
+
                     default:
+                        // Invalid path: Direct to main screen 
                         header('Location: http://' . $_SERVER['HTTP_HOST'] . '/easy-install.php');
                 }
+
+                // Back button only on certain pages
                 if ($step != 'welcome' && $step != 'download') { ?>
                     <hr>
                     <div align="center">
                         <button onclick="history.back();" class="btn btn-sm btn-secondary">« Back</button>
                     </div>
                 <?php } ?>
+
                 <div align="right">
                     <p>Nameless-Installer | Version: 1.0.0-rc2</p>
                 </div>
@@ -276,14 +300,13 @@ function showDebugging($message)
         // This seems to only work in Firefox & Chrome, in Safari nothing changes from "STANDBY"
         let dotCount = 0
         var dots = window.setInterval(function() {
-            if (installing) {
-                if (dotCount < 3) {
-                    status.innerHTML += "."
-                        ++dotCount
-                } else {
-                    status.innerHTML = "WORKING"
-                    dotCount = 0
-                }
+            if (!installing) return;
+            if (dotCount < 3) {
+                status.innerHTML += "."
+                    ++dotCount
+            } else {
+                status.innerHTML = "WORKING"
+                dotCount = 0
             }
         }, 450);
     </script>
