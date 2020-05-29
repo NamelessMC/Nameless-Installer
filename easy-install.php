@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0-rc2
+ *  Nameless-Installer version 1.0.0-rc3
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -12,13 +12,15 @@
 
 // Dont allow rerunning if Nameless is currently installed
 if (file_exists('./core/config.php')) {
-    header('Location: http://' . $_SERVER['HTTP_HOST'] . '/');
+    header('Location: ./');
 }
 
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+ob_start();
 
 $version = $_GET['ver'] ?? 'null';
 $step = $_GET['step'] ?? 'welcome';
@@ -201,7 +203,7 @@ function showDebugging($message)
 
                             // Direct to selection screen if they went to an invalid version
                             else {
-                                header('Location: http://' . $_SERVER['HTTP_HOST'] . '/easy-install.php?step=select');
+                                header('Location: ./easy-install.php?step=select');
                                 break;
                             }
 
@@ -213,6 +215,10 @@ function showDebugging($message)
                             }
 
                             // Unzip, move files and cleanup
+                            if (!class_exists(ZipArchive::class)) {
+                                showError("ZipArchive class not found. Try updating your PHP version.");
+                                break;
+                            }
                             $zip = new ZipArchive;
                             if ($zip->open($zip_file)) {
                                 $zip->extractTo('./');
@@ -242,27 +248,25 @@ function showDebugging($message)
 
                                     // If a warning happened, they can continue, but we let them know. If not, we just redirect them
                                     if (!$redirect) { ?>
-                                        <p>Something minor went wrong, but you can continue. <a href="http://<?php echo $_SERVER['HTTP_HOST'] ?>">Click here</a>.</p>
+                                        <p>Something minor went wrong, but you can continue. <a href="./">Click here</a>.</p>
                                         <hr>
-                                    <?php } else { ?>
-                                        <script>
-                                            window.location.href = 'http://<?php echo $_SERVER['HTTP_HOST'] ?>'
-                                        </script>
-                    <?php }
+                    <?php
+                                    } else {
+                                        header('Location: ./');
+                                        ob_end_flush();
+                                    }
                                 } else {
                                     showError("NamelessMC could not be moved from the extracted folder.");
-                                    break;
                                 }
                             } else {
                                 showError("NamelessMC could not be extracted.");
-                                break;
                             }
                             break;
                         }
 
                     default:
                         // Invalid path: Direct to main screen 
-                        header('Location: http://' . $_SERVER['HTTP_HOST'] . '/easy-install.php');
+                        header('Location: ./easy-install.php');
                 }
 
                 // Back button only on certain pages
@@ -274,7 +278,7 @@ function showDebugging($message)
                 <?php } ?>
 
                 <div align="right">
-                    <p>Nameless-Installer | Version: 1.0.0-rc2</p>
+                    <p>Nameless-Installer | Version: 1.0.0-rc3</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
