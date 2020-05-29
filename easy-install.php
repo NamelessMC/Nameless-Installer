@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0-rc3
+ *  Nameless-Installer version 1.0.0-rc3.1
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -20,6 +20,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// This allows us to use header() without facing issues
 ob_start();
 
 $version = $_GET['ver'] ?? 'null';
@@ -42,6 +43,7 @@ function moveDirectory($source, $dest)
             }
             $__dest = $dest . "/" . basename($source);
         } else $__dest = $dest;
+
         $result = copy($source, $__dest);
         chmod($__dest, 0755);
     } elseif (is_dir($source)) {
@@ -52,6 +54,7 @@ function moveDirectory($source, $dest)
                 @mkdir($dest);
             }
         } else @mkdir($dest, 0755);
+
         $dirHandle = opendir($source);
         while ($file = readdir($dirHandle)) {
             if ($file != "." && $file != "..") {
@@ -103,9 +106,17 @@ function showDebugging($message)
 <?php
 }
 
+// Made this a function so we do not have messy php tags
+function minorWarning()
+{ ?>
+    <p>Something minor went wrong, but you can continue. <a href="./">Click here</a>.</p>
+    <hr>
+<?php
+}
+
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -129,7 +140,7 @@ function showDebugging($message)
         }
     </style>
 
-    <div class="container" align="center">
+    <div class="container" style="text-align: center;">
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
@@ -153,8 +164,8 @@ function showDebugging($message)
                             <p>This script will download and extract NamelessMC for you.</p>
                             <p>In the next step we will choose which version of NamelessMC to install.</p>
                             <a class="btn btn-primary" style="color: white;" href="?step=select">Continue »</a>
-                        <?php
-                            break;
+
+                        <?php break;
                         }
 
                     case 'select': { ?>
@@ -190,10 +201,10 @@ function showDebugging($message)
                             <p><i>NamelessMC <?php echo $version ?> will now download and extract itself.</i></p>
                             <p>It will automatically refresh, so please do not reload the page.</p>
                             <p>Click <a href="?step=download&ver=<?php echo $version ?>" onclick="statusUpdate()">here</a> to proceed.</p>
-                            <div id="status" align="center"></div>
+                            <div id="status"></div>
                             <h4 id="no-reload" style="color: red; display: none"><b>DO NOT RELOAD</b></h4>
 
-                            <?php break;
+                    <?php break;
                         }
 
                     case 'download': {
@@ -219,6 +230,8 @@ function showDebugging($message)
                                 showError("ZipArchive class not found. Try updating your PHP version.");
                                 break;
                             }
+
+                            // Continue to extract, move and cleanup NMC files
                             $zip = new ZipArchive;
                             if ($zip->open($zip_file)) {
                                 $zip->extractTo('./');
@@ -247,11 +260,8 @@ function showDebugging($message)
                                     }
 
                                     // If a warning happened, they can continue, but we let them know. If not, we just redirect them
-                                    if (!$redirect) { ?>
-                                        <p>Something minor went wrong, but you can continue. <a href="./">Click here</a>.</p>
-                                        <hr>
-                    <?php
-                                    } else {
+                                    if (!$redirect) minorWarning();
+                                    else {
                                         header('Location: ./');
                                         ob_end_flush();
                                     }
@@ -259,8 +269,9 @@ function showDebugging($message)
                                     showError("NamelessMC could not be moved from the extracted folder.");
                                 }
                             } else {
-                                showError("NamelessMC could not be extracted.");
+                                showError("NamelessMC archive could not be extracted/opened.");
                             }
+
                             break;
                         }
 
@@ -272,13 +283,13 @@ function showDebugging($message)
                 // Back button only on certain pages
                 if ($step != 'welcome' && $step != 'download') { ?>
                     <hr>
-                    <div align="center">
+                    <div>
                         <button onclick="history.back();" class="btn btn-sm btn-secondary">« Back</button>
                     </div>
                 <?php } ?>
 
-                <div align="right">
-                    <p>Nameless-Installer | Version: 1.0.0-rc3</p>
+                <div style="text-align:right;">
+                    <p>Nameless-Installer | Version: 1.0.0-rc3.1</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
@@ -287,17 +298,19 @@ function showDebugging($message)
 
     <script>
         const status = document.getElementById("status");
-        status.innerHTML = "STANDBY"
-        status.style.color = "Orange"
-        status.style.fontSize = "large"
-        status.style.fontWeight = "bold"
+        if (status !== null) {
+            status.innerHTML = "STANDBY"
+            status.style.color = "Orange"
+            status.style.fontSize = "large"
+            status.style.fontWeight = "bold"
+        }
 
         let installing = false;
 
         function statusUpdate() {
             status.innerHTML = "WORKING"
             status.style.color = "Green"
-            installing = true;
+            installing = true
             document.getElementById("no-reload").style.display = "block"
         }
 
@@ -306,8 +319,8 @@ function showDebugging($message)
         var dots = window.setInterval(function() {
             if (!installing) return;
             if (dotCount < 3) {
+                ++dotCount
                 status.innerHTML += "."
-                    ++dotCount
             } else {
                 status.innerHTML = "WORKING"
                 dotCount = 0
