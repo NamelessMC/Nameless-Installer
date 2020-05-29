@@ -1,6 +1,6 @@
 FROM php:apache
 
-RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install pdo_mysql mysqli
 
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
