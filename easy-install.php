@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0-rc3.1
+ *  Nameless-Installer version 1.0.0-rc3.2
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -158,13 +158,21 @@ function minorWarning()
 
                 <?php
                 switch ($step) {
-                    case 'welcome': { ?>
-
+                    case 'welcome': {
+                            if (!ini_get('allow_url_fopen')) { ?>
+                                <p style="color: red;">[ERROR]: <kbd>allow_url_fopen</kbd> is blocked in your php.ini file. Please set this to <kbd>1</kbd> to continue with the Easy Installer.</p>
+                                <p>If you cannot change this value, you can use an alternative download from <a href="https://namelessmc.com/download" target="_blank">here</a>.</p>
+                            <?php break;
+                            }
+                            if (!class_exists(ZipArchive::class)) { ?>
+                                <p style="color: red;">[ERROR]: The <kbd>ZipArchive</kbd> class does not exist. Please update your PHP version (>= 5.2) to continue with the Easy Installer.</p>
+                                <p>If you cannot update PHP, you can use an alternative download from <a href="https://namelessmc.com/download" target="_blank">here</a>.</p>
+                            <?php break;
+                            } ?>
                             <p><i>Welcome to NamelessMC!</i></p>
                             <p>This script will download and extract NamelessMC for you.</p>
                             <p>In the next step we will choose which version of NamelessMC to install.</p>
                             <a class="btn btn-primary" style="color: white;" href="?step=select">Continue »</a>
-
                         <?php break;
                         }
 
@@ -225,12 +233,6 @@ function minorWarning()
                                 break;
                             }
 
-                            // Unzip, move files and cleanup
-                            if (!class_exists(ZipArchive::class)) {
-                                showError("ZipArchive class not found. Try updating your PHP version.");
-                                break;
-                            }
-
                             // Continue to extract, move and cleanup NMC files
                             $zip = new ZipArchive;
                             if ($zip->open($zip_file)) {
@@ -264,6 +266,7 @@ function minorWarning()
                                     else {
                                         header('Location: ./');
                                         ob_end_flush();
+                                        unlink(__FILE__);
                                     }
                                 } else {
                                     showError("NamelessMC could not be moved from the extracted folder.");
@@ -289,7 +292,7 @@ function minorWarning()
                 <?php } ?>
 
                 <div style="text-align:right;">
-                    <p>Nameless-Installer | Version: 1.0.0-rc3.1</p>
+                    <p>Nameless-Installer | Version: 1.0.0-rc3.2</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
