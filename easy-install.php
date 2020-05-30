@@ -266,7 +266,6 @@ function minorWarning()
                                     else {
                                         header('Location: ./');
                                         ob_end_flush();
-                                        unlink(__FILE__);
                                     }
                                 } else {
                                     showError("NamelessMC could not be moved from the extracted folder.");
