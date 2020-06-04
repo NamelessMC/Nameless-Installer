@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0-rc3.2
+ *  Nameless-Installer version 1.0.0-rc4
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -128,6 +128,10 @@ function minorWarning()
 <body style="background-color: #F3F6FA">
 
     <style>
+        .card {
+            cursor: pointer;
+        }
+
         .btn-version,
         .btn-version:hover {
             color: white;
@@ -183,7 +187,7 @@ function minorWarning()
                             <p><b>v2</b> is recommended by NamelessMC developers as it is a complete rewrite and provides many more functionalities - such as modules, widgets and beautiful templates.</p>
                             <br />
                             <div class="row">
-                                <div class="card mx-auto" style="width: 22rem;">
+                                <div class="card mx-auto" style="width: 22rem;" onclick="window.location.href='?step=verify&ver=v1'">
                                     <div class="card-body rounded" style="background-color: #2185D0">
                                         <h5 class="card-title" style="color: white">Legacy</h5>
                                         <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v1-homepage.jpg" class="card-img" alt="NamelessMC v1.0.21">
@@ -191,7 +195,7 @@ function minorWarning()
                                         <a href="?step=verify&ver=v1" class="btn btn-outline btn-version">v1.0.21</a>
                                     </div>
                                 </div>
-                                <div class="card mx-auto" style="width: 22rem;">
+                                <div class="card mx-auto" style="width: 22rem;" onclick="window.location.href='?step=verify&ver=v2'">
                                     <div class="card-body rounded" style="background-color: #21BA45">
                                         <h5 class="card-title" style="color: white">Recommended</h5>
                                         <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr7">
@@ -291,7 +295,7 @@ function minorWarning()
                 <?php } ?>
 
                 <div style="text-align:right;">
-                    <p>Nameless-Installer | Version: 1.0.0-rc3.2</p>
+                    <p>Nameless-Installer | Version: 1.0.0-rc4</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
