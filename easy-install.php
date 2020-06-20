@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0-rc4
+ *  Nameless-Installer version 1.0.0-rc4.1
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -10,7 +10,7 @@
  *  License: MIT
  */
 
-// Dont allow rerunning if Nameless is currently installed
+// Don't allow rerunning if Nameless is currently installed
 if (file_exists('./core/config.php')) {
     header('Location: ./');
 }
@@ -29,7 +29,7 @@ $step = $_GET['step'] ?? 'welcome';
 $zip_url = '';
 $zip_file = 'namelessmc-' . $version . '.zip';
 // These will need to be updated with each NMC release
-$zip_subdir = ($version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr7');
+$zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr7';
 
 // Recursively copy a directory to another location. Used after extraction of the zip file
 function moveDirectory($source, $dest)
@@ -38,21 +38,16 @@ function moveDirectory($source, $dest)
 
     if (is_file($source)) {
         if ($dest[strlen($dest) - 1] == '/') {
-            if (!file_exists($dest)) {
-                cmfcDirectory::makeAll($dest, 0755, true);
-            }
+            if (!file_exists($dest)) cmfcDirectory::makeAll($dest, 0755, true);
             $__dest = $dest . "/" . basename($source);
         } else $__dest = $dest;
 
         $result = copy($source, $__dest);
         chmod($__dest, 0755);
     } elseif (is_dir($source)) {
-        if ($dest[strlen($dest) - 1] == '/') {
-            if ($source[strlen($source) - 1] != '/') {
-                // Change parent itself and its contents
-                $dest = $dest . basename($source);
-                @mkdir($dest);
-            }
+        if ($dest[strlen($dest) - 1] == '/' && $source[strlen($source) - 1] != '/') {
+            $dest = $dest . basename($source);
+            @mkdir($dest);
         } else @mkdir($dest, 0755);
 
         $dirHandle = opendir($source);
@@ -130,6 +125,7 @@ function minorWarning()
     <style>
         .card {
             cursor: pointer;
+            width: 22rem;
         }
 
         .btn-version,
@@ -169,8 +165,8 @@ function minorWarning()
                             <?php break;
                             }
                             if (!class_exists(ZipArchive::class)) { ?>
-                                <p style="color: red;">[ERROR]: The <kbd>ZipArchive</kbd> class does not exist. Please update your PHP version (>= 5.2) to continue with the Easy Installer.</p>
-                                <p>If you cannot update PHP, you can use an alternative download from <a href="https://namelessmc.com/download" target="_blank">here</a>.</p>
+                                <p style="color: red;">[ERROR]: The <kbd>ZipArchive</kbd> class does not exist. Please ensure you have the zip extension enabled to continue with the Easy Installer.</p>
+                                <p>If you cannot install this extension, you can use an alternative download from <a href="https://namelessmc.com/download" target="_blank">here</a>.</p>
                             <?php break;
                             } ?>
                             <p><i>Welcome to NamelessMC!</i></p>
@@ -187,7 +183,7 @@ function minorWarning()
                             <p><b>v2</b> is recommended by NamelessMC developers as it is a complete rewrite and provides many more functionalities - such as modules, widgets and beautiful templates.</p>
                             <br />
                             <div class="row">
-                                <div class="card mx-auto" style="width: 22rem;" onclick="window.location.href='?step=verify&ver=v1'">
+                                <div class="card mx-auto" onclick="window.location.href='?step=verify&ver=v1'">
                                     <div class="card-body rounded" style="background-color: #2185D0">
                                         <h5 class="card-title" style="color: white">Legacy</h5>
                                         <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v1-homepage.jpg" class="card-img" alt="NamelessMC v1.0.21">
@@ -195,7 +191,7 @@ function minorWarning()
                                         <a href="?step=verify&ver=v1" class="btn btn-outline btn-version">v1.0.21</a>
                                     </div>
                                 </div>
-                                <div class="card mx-auto" style="width: 22rem;" onclick="window.location.href='?step=verify&ver=v2'">
+                                <div class="card mx-auto" onclick="window.location.href='?step=verify&ver=v2'">
                                     <div class="card-body rounded" style="background-color: #21BA45">
                                         <h5 class="card-title" style="color: white">Recommended</h5>
                                         <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr7">
@@ -213,7 +209,7 @@ function minorWarning()
                             <p><i>NamelessMC <?php echo $version ?> will now download and extract itself.</i></p>
                             <p>It will automatically refresh, so please do not reload the page.</p>
                             <p>Click <a href="?step=download&ver=<?php echo $version ?>" onclick="statusUpdate()">here</a> to proceed.</p>
-                            <div id="status"></div>
+                            <div id="status" style="color: orange; font-size: large; font-weight:bold;">STANDBY</div>
                             <h4 id="no-reload" style="color: red; display: none"><b>DO NOT RELOAD</b></h4>
 
                     <?php break;
@@ -233,7 +229,7 @@ function minorWarning()
                             // Download the zip from Github, if this fails, probably a permission issue
                             if (copy($zip_url, $zip_file)) showDebugging("NamelessMC ($zip_file) downloaded...");
                             else {
-                                showError("NamelessMC could not be downloaded.");
+                                showError("NamelessMC could not be downloaded. Please ensure your webserver has permission to write to your file system.");
                                 break;
                             }
 
@@ -271,13 +267,8 @@ function minorWarning()
                                         header('Location: ./');
                                         ob_end_flush();
                                     }
-                                } else {
-                                    showError("NamelessMC could not be moved from the extracted folder.");
-                                }
-                            } else {
-                                showError("NamelessMC archive could not be extracted/opened.");
-                            }
-
+                                } else showError("NamelessMC could not be moved from the extracted folder.");
+                            } else showError("NamelessMC archive could not be extracted/opened.");
                             break;
                         }
 
@@ -295,7 +286,7 @@ function minorWarning()
                 <?php } ?>
 
                 <div style="text-align:right;">
-                    <p>Nameless-Installer | Version: 1.0.0-rc4</p>
+                    <p>Nameless-Installer | Version: 1.0.0-rc4.1</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
@@ -304,32 +295,26 @@ function minorWarning()
 
     <script>
         const status = document.getElementById("status");
-        if (status !== null) {
-            status.innerHTML = "STANDBY"
-            status.style.color = "Orange"
-            status.style.fontSize = "large"
-            status.style.fontWeight = "bold"
-        }
 
         let installing = false;
 
         function statusUpdate() {
-            status.innerHTML = "WORKING"
-            status.style.color = "Green"
-            installing = true
-            document.getElementById("no-reload").style.display = "block"
+            status.innerHTML = "WORKING";
+            status.style.color = "Green";
+            installing = true;
+            document.getElementById("no-reload").style.display = "block";
         }
 
         // This seems to only work in Firefox & Chrome, in Safari nothing changes from "STANDBY"
-        let dotCount = 0
+        let dotCount = 0;
         var dots = window.setInterval(function() {
             if (!installing) return;
             if (dotCount < 3) {
-                ++dotCount
-                status.innerHTML += "."
+                ++dotCount;
+                status.innerHTML += ".";
             } else {
-                status.innerHTML = "WORKING"
-                dotCount = 0
+                status.innerHTML = "WORKING";
+                dotCount = 0;
             }
         }, 450);
     </script>
