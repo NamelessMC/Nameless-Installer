@@ -6,7 +6,7 @@ This will download the latest [release](https://github.com/NamelessMC/Nameless/r
 ## Usage
 * Download `easy-installer.php`.
 * Upload to your webhost.
-* Navigate to `{your-domain.com}/easy-installer.php`.
+* Navigate to `[your-domain.com]/easy-install.php`.
 * Follow the easy steps.
 
 ## Downloads & Support
