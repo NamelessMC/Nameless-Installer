@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0-rc4.1
+ *  Nameless-Installer version 1.0.0
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -32,8 +32,7 @@ $zip_file = 'namelessmc-' . $version . '.zip';
 $zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr7';
 
 // Recursively copy a directory to another location. Used after extraction of the zip file
-function moveDirectory($source, $dest)
-{
+function moveDirectory($source, $dest) {    
     $result = false;
 
     if (is_file($source)) {
@@ -47,8 +46,8 @@ function moveDirectory($source, $dest)
     } elseif (is_dir($source)) {
         if ($dest[strlen($dest) - 1] == '/' && $source[strlen($source) - 1] != '/') {
             $dest = $dest . basename($source);
-            @mkdir($dest);
-        } else @mkdir($dest, 0755);
+            mkdir($dest);
+        } else mkdir($dest, 0755);
 
         $dirHandle = opendir($source);
         while ($file = readdir($dirHandle)) {
@@ -64,8 +63,7 @@ function moveDirectory($source, $dest)
 }
 
 // Used to delete the original extracted zip dir
-function deleteDirectory($dir)
-{
+function deleteDirectory($dir) {
     if (!file_exists($dir)) return true;
 
     if (!is_dir($dir)) return unlink($dir);
@@ -79,37 +77,28 @@ function deleteDirectory($dir)
 }
 
 // Used to display errors
-function showError($message)
-{ ?>
+function showError($message) { ?>
     <p style="color: red;">[ERROR]: <?php echo $message ?></p>
     <p>If this continues to happen, contact support in our <a href=" https://discord.gg/QWdS9CB" target="_blank">Discord</a>.</p>
     <a href="?step=select">Click here to try again.</a>
-<?php
-}
+<?php }
 
 // Used to display warnings
-function showWarning($message)
-{ ?>
+function showWarning($message) { ?>
     <p style="color: goldenrod;">[WARNING]: <?php echo $message ?></p>
-<?php
-}
+<?php }
 
 // Used to display debugging info
-function showDebugging($message)
-{ ?>
+function showDebugging($message) { ?>
     <p style="color: green;">[DEBUG]: <?php echo $message ?></p>
-<?php
-}
+<?php }
 
 // Made this a function so we do not have messy php tags
-function minorWarning()
-{ ?>
+function minorWarning() { ?>
     <p>Something minor went wrong, but you can continue. <a href="./">Click here</a>.</p>
     <hr>
-<?php
-}
+<?php } ?>
 
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -204,8 +193,11 @@ function minorWarning()
                         <?php break;
                         }
 
-                    case 'verify': { ?>
-
+                    case 'verify': { 
+                            if ($version != 'v1' && $version != 'v2') {
+                                header('Location: ./easy-install.php?step=select');
+                                break;
+                            } ?>
                             <p><i>NamelessMC <?php echo $version ?> will now download and extract itself.</i></p>
                             <p>It will automatically refresh, so please do not reload the page.</p>
                             <p>Click <a href="?step=download&ver=<?php echo $version ?>" onclick="statusUpdate()">here</a> to proceed.</p>
@@ -263,10 +255,7 @@ function minorWarning()
 
                                     // If a warning happened, they can continue, but we let them know. If not, we just redirect them
                                     if (!$redirect) minorWarning();
-                                    else {
-                                        header('Location: ./');
-                                        ob_end_flush();
-                                    }
+                                    else header('Location: ./');
                                 } else showError("NamelessMC could not be moved from the extracted folder.");
                             } else showError("NamelessMC archive could not be extracted/opened.");
                             break;
@@ -286,7 +275,7 @@ function minorWarning()
                 <?php } ?>
 
                 <div style="text-align:right;">
-                    <p>Nameless-Installer | Version: 1.0.0-rc4.1</p>
+                    <p>Nameless-Installer | Version: 1.0.0</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
