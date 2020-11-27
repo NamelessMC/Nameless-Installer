@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.0
+ *  Nameless-Installer version 1.0.1
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -281,7 +281,7 @@ function minorWarning() { ?>
                 <?php } ?>
 
                 <div style="text-align:right;">
-                    <p>Nameless-Installer | Version: 1.0.0</p>
+                    <p>Nameless-Installer | Version: 1.0.1</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
