@@ -23,6 +23,12 @@ error_reporting(E_ALL);
 // This allows us to use header() without facing issues
 ob_start();
 
+// Ensure PHP version >= 7.4
+if (version_compare(phpversion(), '7.4', '<')) {
+    die('The Nameless Installer requires PHP version 7.4 or better.');
+}
+
+
 $version = $_GET['ver'] ?? 'null';
 $step = $_GET['step'] ?? 'welcome';
 
