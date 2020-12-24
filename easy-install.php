@@ -255,7 +255,7 @@ function minorWarning() { ?>
                                     // If deleting the zip fails, it is probably a weird permission issue
                                     if (unlink($zip_file)) showDebugging("Success deleting zip file...");
                                     else {
-                                        showWarning("NamelessMC zip file could not be deleted, but it safe to continue.");
+                                        showWarning("NamelessMC zip file could not be deleted, but it is safe to continue.");
                                         $redirect = false;
                                     }
 
