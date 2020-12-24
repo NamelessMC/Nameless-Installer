@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.1
+ *  Nameless-Installer version 1.0.2
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -25,7 +25,7 @@ ob_start();
 
 // Ensure PHP version >= 7.4
 if (version_compare(phpversion(), '7.4', '<')) {
-    die('The Nameless Installer requires PHP version 7.4 or better.');
+    die('The Nameless Installer requires PHP version 7.4 or better. Install normally from https://namelessmc.com/downloads if you do not have PHP 7.4 yet.');
 }
 
 
@@ -35,7 +35,7 @@ $step = $_GET['step'] ?? 'welcome';
 $zip_url = '';
 $zip_file = 'namelessmc-' . $version . '.zip';
 // These will need to be updated with each NMC release
-$zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr7';
+$zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr8';
 
 // Recursively copy a directory to another location. Used after extraction of the zip file
 function moveDirectory($source, $dest) {    
@@ -281,7 +281,7 @@ function minorWarning() { ?>
                 <?php } ?>
 
                 <div style="text-align:right;">
-                    <p>Nameless-Installer | Version: 1.0.1</p>
+                    <p>Nameless-Installer | Version: 1.0.2</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
