@@ -35,7 +35,7 @@ $step = $_GET['step'] ?? 'welcome';
 $zip_url = '';
 $zip_file = 'namelessmc-' . $version . '.zip';
 // These will need to be updated with each NMC release
-$zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr8';
+$zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr9';
 
 // Recursively copy a directory to another location. Used after extraction of the zip file
 function moveDirectory($source, $dest) {    
