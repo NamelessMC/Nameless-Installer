@@ -174,7 +174,7 @@ function minorWarning() { ?>
                     case 'select': { ?>
 
                             <p><i>Now you must choose which version of NamelessMC you want to install.</i></p>
-                            <p>NamelessMC has two versions: <b>v1 (1.0.21)</b> and <b>v2 (pr7)</b>.</p>
+                            <p>NamelessMC has two versions: <b>v1 (1.0.21)</b> and <b>v2 (pr9)</b>.</p>
                             <p><b>v2</b> is recommended by NamelessMC developers as it is a complete rewrite and provides many more functionalities - such as modules, widgets and beautiful templates.</p>
                             <br />
                             <div class="row">
@@ -189,9 +189,9 @@ function minorWarning() { ?>
                                 <div class="card mx-auto" onclick="window.location.href='?step=verify&ver=v2'">
                                     <div class="card-body rounded" style="background-color: #21BA45">
                                         <h5 class="card-title" style="color: white">Recommended</h5>
-                                        <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr7">
+                                        <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr9">
                                         <hr style="background-color: white">
-                                        <a href="?step=verify&ver=v2" class="btn btn-outline btn-version">v2.0.0-pr7</a>
+                                        <a href="?step=verify&ver=v2" class="btn btn-outline btn-version">v2.0.0-pr9</a>
                                     </div>
                                 </div>
                             </div>
@@ -216,7 +216,7 @@ function minorWarning() { ?>
                     case 'download': {
 
                             if ($version == 'v1') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v1.0.21.zip';
-                            else if ($version == 'v2') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v2.0.0-pr7.zip';
+                            else if ($version == 'v2') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v2.0.0-pr9.zip';
 
                             // Direct to selection screen if they went to an invalid version
                             else {
