@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer v2 pre-release 13
+ *  Nameless-Installer version 1.0.3
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
