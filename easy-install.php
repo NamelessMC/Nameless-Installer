@@ -216,6 +216,7 @@ function minorWarning() { ?>
                     case 'download': {
 
                             if ($version == 'v1') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v1.0.21.zip';
+
                             else if ($version == 'v2') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v2.0.0-pr13.zip';
 
                             // Direct to selection screen if they went to an invalid version
