@@ -189,7 +189,7 @@ function minorWarning() { ?>
                                 <div class="card mx-auto" onclick="window.location.href='?step=verify&ver=v2'">
                                     <div class="card-body rounded" style="background-color: #21BA45">
                                         <h5 class="card-title" style="color: white">Recommended</h5>
-                                        <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr10">
+                                        <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr13">
                                         <hr style="background-color: white">
                                         <a href="?step=verify&ver=v2" class="btn btn-outline btn-version">v2.0.0-pr13</a>
                                     </div>
@@ -282,7 +282,7 @@ function minorWarning() { ?>
                 <?php } ?>
 
                 <div style="text-align:right;">
-                    <p>Nameless-Installer | Version: 1.0.3</p>
+                    <p>Nameless-Installer | Version: 1.0.4</p>
                 </div>
             </div>
             <div class="col-md-2"></div>
