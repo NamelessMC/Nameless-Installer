@@ -2,7 +2,7 @@
 /*
  *  Made by Aberdeener
  *  https://github.com/NamelessMC/Nameless-Installer/
- *  Nameless-Installer version 1.0.4
+ *  Nameless-Installer version 1.0.5
  * 
  *  NamelessMC by Samerton
  *  https://github.com/NamelessMC/Nameless/
@@ -35,7 +35,7 @@ $step = $_GET['step'] ?? 'welcome';
 $zip_url = '';
 $zip_file = 'namelessmc-' . $version . '.zip';
 // These will need to be updated with each NMC release
-$zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.0-pr13';
+$zip_subdir = $version == 'v1' ? 'Nameless-1.0.21' : 'Nameless-2.0.2';
 
 // Recursively copy a directory to another location. Used after extraction of the zip file
 function moveDirectory($source, $dest) {    
@@ -191,7 +191,7 @@ function minorWarning() { ?>
                                         <h5 class="card-title" style="color: white">Recommended</h5>
                                         <img src="https://namelessmc.com/custom/templates/Nameless-Semantic/img/v2-homepage.jpg" class="card-img" alt="NamelessMC v2.0.0-pr13">
                                         <hr style="background-color: white">
-                                        <a href="?step=verify&ver=v2" class="btn btn-outline btn-version">v2.0.0-pr13</a>
+                                        <a href="?step=verify&ver=v2" class="btn btn-outline btn-version">v2.0.2/a>
                                     </div>
                                 </div>
                             </div>
@@ -217,7 +217,7 @@ function minorWarning() { ?>
 
                             if ($version == 'v1') $zip_url = 'https://github.com/NamelessMC/Nameless/archive/v1.0.21.zip';
 
-                            else if ($version == 'v2') $zip_url = 'https://github.com/NamelessMC/Nameless/releases/download/v2.0.0-pr13/nameless-deps-dist.zip';
+                            else if ($version == 'v2') $zip_url = 'https://github.com/NamelessMC/Nameless/releases/download/v2.0.2/nameless-deps-dist.zip';
 
                             // Direct to selection screen if they went to an invalid version
                             else {
